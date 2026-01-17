@@ -1,0 +1,99 @@
+// =======================================================
+// Pantalla: PantallaPersonas
+// Descripción:
+// Pantalla destinada a la gestión de personas. Permite la
+// creación, consulta, búsqueda y baja de personas, así como
+// la selección visual del registro activo.
+// =======================================================
+
+
+// -------------------------------------------------------
+// PantallaPersonas - Propiedad: OnVisible
+// Inicialización de variables y estado del formulario
+// -------------------------------------------------------
+Set(
+    varPersonaSeleccionada;
+    Defaults(Personas)
+);;
+
+ResetForm(frmPersona)
+
+
+// -------------------------------------------------------
+// BotónCrearPersona - Propiedad: OnSelect
+// Inicializa un nuevo registro y navega al detalle de persona
+// -------------------------------------------------------
+NewForm(frmPersona);;
+
+Navigate(
+    PantallaPersonaDetalle;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónBajaPersona - Propiedad: OnSelect
+// Navegación a la pantalla de baja de persona
+// -------------------------------------------------------
+Navigate(
+    PantallaBajaPersona;
+    ScreenTransition.Fade
+)
+
+
+// -------------------------------------------------------
+// GaleriaPersonas - Propiedad: Default
+// Establece el elemento seleccionado por defecto
+// -------------------------------------------------------
+If(
+    IsBlank(varPersonaSeleccionada);
+    First(Personas);
+    varPersonaSeleccionada
+)
+
+
+// -------------------------------------------------------
+// GaleriaPersonas - Propiedad: Items
+// Filtrado dinámico de personas en función del estado
+// (activas/todas) y del texto de búsqueda introducido
+// -------------------------------------------------------
+If(
+    chkSoloActivas.Checked;
+    // Solo personas activas
+    If(
+        IsBlank(Trim(txtBuscarPersonas.Text));
+        Filter(
+            Personas;
+            Activa
+        );
+        Filter(
+            Personas;
+            Activa;
+            StartsWith('Nombre (Title)'; txtBuscarPersonas.Text)
+                || StartsWith(Apellidos; txtBuscarPersonas.Text)
+                || StartsWith(DNI; txtBuscarPersonas.Text)
+        )
+    );
+    // Todas las personas (activas e inactivas)
+    If(
+        IsBlank(Trim(txtBuscarPersonas.Text));
+        Personas;
+        Filter(
+            Personas;
+            StartsWith('Nombre (Title)'; txtBuscarPersonas.Text)
+                || StartsWith(Apellidos; txtBuscarPersonas.Text)
+                || StartsWith(DNI; txtBuscarPersonas.Text)
+        )
+    )
+)
+
+
+// -------------------------------------------------------
+// GaleriaPersonas - Propiedad: TemplateFill
+// Resalta visualmente la persona seleccionada
+// -------------------------------------------------------
+If(
+    varPersonaSeleccionada.ID = ThisItem.ID;
+    RGBA(200; 200; 200; 1);
+    RGBA(255; 255; 255; 1)
+)
