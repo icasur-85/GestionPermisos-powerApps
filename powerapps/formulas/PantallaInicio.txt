@@ -1,0 +1,94 @@
+// =======================================================
+// Pantalla: PantallaInicio
+// Descripción:
+// Pantalla inicial de la aplicación. Gestiona la
+// inicialización del contexto del usuario y permite la
+// navegación a las diferentes funcionalidades disponibles.
+// =======================================================
+
+
+// -------------------------------------------------------
+// PantallaInicio - Propiedad: OnVisible
+// Inicialización de variables de contexto y control de rol
+// -------------------------------------------------------
+Set(
+    varRolUsuario;
+    LookUp(
+        Roles;
+        Usuario.Email = User().Email;
+        Rol
+    ).Value
+);;
+
+Set(
+    varEsTIC;
+    varRolUsuario = "TIC-Administrador"
+)
+
+
+// -------------------------------------------------------
+// BotónPersonas - Propiedad: OnSelect
+// Navegación a la pantalla de gestión de personas
+// -------------------------------------------------------
+Navigate(
+    PantallaPersonas;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónSolicitudPermiso - Propiedad: OnSelect
+// Inicialización de nueva solicitud y navegación al formulario
+// -------------------------------------------------------
+Set(
+    varSolicitudSeleccionada;
+    Defaults(Solicitudes)
+);;
+
+NewForm(frmSolicitud);;
+
+Navigate(
+    PantallaEditarSolicitud;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónConsultaSolicitudes - Propiedad: OnSelect
+// Navegación a la pantalla de solicitudes del usuario
+// -------------------------------------------------------
+Navigate(
+    PantallaMisSolicitudes;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónGestionarSolicitudes - Propiedad: OnSelect
+// Navegación a la pantalla de tramitación de solicitudes
+// -------------------------------------------------------
+Navigate(
+    PantallaSolicitudesPendientes;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónConcesiones - Propiedad: OnSelect
+// Navegación al menú de gestión de concesiones
+// -------------------------------------------------------
+Navigate(
+    PantallaMenuConcesiones;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónListados - Propiedad: OnSelect
+// Navegación al menú de listados exportables a Excel
+// -------------------------------------------------------
+Navigate(
+    PantallaMenuListados;
+    ScreenTransition.Cover
+)
+
