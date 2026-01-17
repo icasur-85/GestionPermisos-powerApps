@@ -1,0 +1,47 @@
+// =======================================================
+// Pantalla: PantallaMenuConcesiones
+// Descripción:
+// Pantalla de menú para la gestión de concesiones. Permite
+// la navegación a las distintas funcionalidades relacionadas
+// con la consulta, revocación y control de concesiones.
+// =======================================================
+
+
+// -------------------------------------------------------
+// BotónRevocarConcesion - Propiedad: OnSelect
+// Navegación a la pantalla de revocación de concesiones
+// -------------------------------------------------------
+Navigate(
+    PantallaRevocarConcesion;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónBajaPersona - Propiedad: OnSelect
+// Navegación a la pantalla de baja de persona
+// -------------------------------------------------------
+Navigate(
+    PantallaBajaPersona;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónConcesionesCaducadas - Propiedad: OnSelect
+// Navegación a la pantalla de concesiones caducadas
+// -------------------------------------------------------
+Navigate(
+    PantallaConcesionesCaducadas;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónConsultaConcesiones - Propiedad: OnSelect
+// Navegación a la pantalla de consulta de concesiones por persona
+// -------------------------------------------------------
+Navigate(
+    PantallaConsultaPersona;
+    ScreenTransition.Cover
+)
