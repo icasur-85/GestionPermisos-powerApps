@@ -1,0 +1,31 @@
+// =======================================================
+// Pantalla: PantallaPersonaDetalle
+// Descripción:
+// Pantalla de detalle de persona. Permite la creación y
+// edición de registros de personas mediante un formulario.
+// =======================================================
+
+
+// -------------------------------------------------------
+// frmPersona - Propiedad: Item
+// Determina el registro que se muestra en el formulario.
+// Si no hay selección previa, se inicializa un nuevo registro.
+// -------------------------------------------------------
+If(
+    IsBlank(galPersonas.Selected);
+    Defaults(Personas);
+    galPersonas.Selected
+)
+
+
+// -------------------------------------------------------
+// frmPersona - Propiedad: OnSuccess
+// Notifica al usuario el guardado correcto del registro
+// y retorna a la pantalla anterior.
+// -------------------------------------------------------
+Notify(
+    "Persona guardada correctamente.";
+    NotificationType.Success
+);;
+
+Back()
