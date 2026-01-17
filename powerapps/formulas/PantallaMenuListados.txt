@@ -1,0 +1,26 @@
+// =======================================================
+// Pantalla: PantallaMenuListados
+// Descripción:
+// Pantalla de menú para el acceso a los distintos listados
+// exportables disponibles en la aplicación.
+// =======================================================
+
+
+// -------------------------------------------------------
+// BotónListadoPorRecurso - Propiedad: OnSelect
+// Navegación al listado de permisos/concesiones por recurso
+// -------------------------------------------------------
+Navigate(
+    PantallaListadoPorRecurso;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// BotónListadoPorPersona - Propiedad: OnSelect
+// Navegación al listado de permisos/concesiones por persona
+// -------------------------------------------------------
+Navigate(
+    PantallaListadoPorPersona;
+    ScreenTransition.Cover
+)
