@@ -1,0 +1,98 @@
+// =======================================================
+// Pantalla: PantallaConcesionesCaducadas
+// Descripción:
+// Pantalla destinada a la revocación masiva de concesiones
+// caducadas. Permite seleccionar concesiones (colección) y
+// ejecutar la revocación mediante confirmación en popup.
+// =======================================================
+
+
+// -------------------------------------------------------
+// PopupRevocar - lblPopup (propiedad Text)
+// Mensaje de confirmación indicando el número de concesiones
+// seleccionadas para revocar
+// -------------------------------------------------------
+"Va a revocar " & CountRows(colConcesionesSel) &
+" concesiones caducadas. ¿Quiere continuar?"
+
+
+// -------------------------------------------------------
+// btnCancelarPopup - Propiedad: OnSelect
+// Cierra el popup de confirmación
+// -------------------------------------------------------
+Set(varPopupRevocar; false)
+
+
+// -------------------------------------------------------
+// btnConfirmarPopup - Propiedad: OnSelect
+// Revoca las concesiones seleccionadas, limpia estado,
+// refresca datos y notifica el resultado
+// -------------------------------------------------------
+ForAll(
+    Filter(colConcesionesSel; !IsBlank(ID));
+    Patch(
+        Concesiones;
+        { ID: ThisRecord.ID };
+        {
+            EstadoConcesion: { Value: "Revocada" };
+            // Fecha real de finalización tras revocación TIC
+            FechaFin: Today()
+        }
+    )
+);;
+
+Set(varPopupRevocar; false);;
+Clear(colConcesionesSel);;
+Refresh(Concesiones);;
+
+Notify(
+    "Concesiones revocadas correctamente.";
+    NotificationType.Success
+)
+
+
+// -------------------------------------------------------
+// btnRevocar - Propiedad: OnSelect
+// Abre el popup de confirmación
+// -------------------------------------------------------
+Set(varPopupRevocar; true)
+
+
+// -------------------------------------------------------
+// btnRevocar - Propiedad: Text
+// Texto dinámico con recuento de seleccionadas
+// -------------------------------------------------------
+"Revocar (" & CountRows(colConcesionesSel) & ")"
+
+
+// -------------------------------------------------------
+// btnRevocar - Propiedad: DisplayMode
+// Deshabilita el botón si no hay concesiones seleccionadas
+// -------------------------------------------------------
+If(
+    CountRows(colConcesionesSel) = 0;
+    DisplayMode.Disabled;
+    DisplayMode.Edit
+)
+
+
+// -------------------------------------------------------
+// galCaducadas - Propiedad: Items
+// Lista de concesiones en estado "Caducada"
+// -------------------------------------------------------
+Filter(
+    Concesiones;
+    EstadoConcesion.Value = "Caducada"
+)
+
+
+// -------------------------------------------------------
+// chkSel - Propiedad: Default (o Value)
+// Marca como seleccionado si el elemento existe en la colección
+// -------------------------------------------------------
+!IsBlank(
+    LookUp(
+        colConcesionesSel;
+        ID = ThisItem.ID
+    )
+)
