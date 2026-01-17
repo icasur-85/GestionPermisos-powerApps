@@ -1,1 +1,48 @@
+========================================================
+EXPRESIONES UTILIZADAS EN POWER AUTOMATE
+========================================================
+
+1) Conversión de datos recibidos desde Power Apps
+-----------------------------------------------
+json(triggerBody()?['datos'])
+
+Utilizada para interpretar la colección enviada desde Power Apps en formato JSON
+y poder recorrer los registros en el flujo.
+
+--------------------------------------------------------
+
+2) Recuento de elementos a exportar
+-----------------------------------------------
+length(body('Parse_JSON'))
+
+Permite conocer el número de registros recibidos y gestionar el proceso de inserción
+en Excel.
+
+--------------------------------------------------------
+
+3) Bucle de inserción en Excel
+-----------------------------------------------
+items('Apply_to_each')
+
+Expresión utilizada dentro del bucle para acceder al elemento actual y mapear los
+campos hacia las columnas del fichero Excel.
+
+--------------------------------------------------------
+
+4) Condición de existencia de datos
+-----------------------------------------------
+greater(length(body('Parse_JSON')), 0)
+
+Evita la ejecución del flujo si no se reciben registros desde Power Apps.
+
+--------------------------------------------------------
+
+5) Respuesta a Power Apps
+-----------------------------------------------
+{
+  "fileurl": "@{outputs('Create_file')?['body/Path']}"
+}
+
+Devuelve a Power Apps la ruta/URL del fichero Excel generado para su apertura
+automática desde la aplicación.
 
