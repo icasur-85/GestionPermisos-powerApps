@@ -1,0 +1,104 @@
+frmTramitarSolicitud
+onfailure
+Notify("No se ha podido guardar la solicitud."; NotificationType.Error)
+
+onsuccess
+If(
+    frmTramitarSolicitud.Mode = FormMode.New;
+        Notify("Solicitud creada correctamente."; NotificationType.Success);
+        Notify("Solicitud actualizada correctamente."; NotificationType.Success)
+);;
+ResetForm(frmTramitarSolicitud);;
+Navigate(PantallaMisSolicitudes; ScreenTransition.UnCover)
+
+datasource
+Solicitudes
+
+item
+varSolicitudSeleccionada
+
+
+Botón aceptar 
+onselect
+// 1) Guardar posibles cambios del formulario
+SubmitForm(frmTramitarSolicitud);;
+
+// 2) Cambiar la solicitud a Aceptada
+Patch(
+    Solicitudes;
+    varSolicitudSeleccionada;
+    {
+        Estado: { Value: "Aceptada" }
+    }
+);;
+
+// 3) Crear la concesión asociada
+Patch(
+    Concesiones;
+    Defaults(Concesiones);
+    {
+        Título: "Concesión " & Text(Today(); "dd/mm/yyyy");
+
+        // Lookup a la solicitud origen
+        SolicitudRef: {
+            Id: varSolicitudSeleccionada.ID;
+            Value: Text(varSolicitudSeleccionada.ID)
+        };
+
+        // Lookups a Persona / Recurso / TipoPermiso
+        Persona: {
+            Id: varSolicitudSeleccionada.Persona.Id;
+            Value: varSolicitudSeleccionada.Persona.Value
+        };
+
+        Recurso: {
+            Id: varSolicitudSeleccionada.Recurso.Id;
+            Value: varSolicitudSeleccionada.Recurso.Value
+        };
+
+        TipoPermiso: {
+            Id: varSolicitudSeleccionada.TipoPermiso.Id;
+            Value: varSolicitudSeleccionada.TipoPermiso.Value
+        };
+
+        FechaConcesion: Today();
+        FechaFin: varSolicitudSeleccionada.FechaFin;
+
+        EstadoConcesion: { Value: "Vigente" };
+
+        Observaciones: PlainText(Coalesce(frmTramitarSolicitud.Updates.Observaciones; varSolicitudSeleccionada.Observaciones; ""))
+
+    }
+);;
+
+// 4) Aviso y volver a la lista de pendientes
+Notify(
+    "Solicitud aceptada y concesión creada correctamente.";
+    NotificationType.Success
+);;
+Navigate(
+    PantallaSolicitudesPendientes;
+    ScreenTransition.UnCover
+)
+
+
+botón rechazar
+// guardar cambios del formulario
+SubmitForm(frmTramitarSolicitud);;
+
+// Dejar la solicitud en estado Rechazada
+Patch(
+    Solicitudes;
+    varSolicitudSeleccionada;
+    { Estado: { Value: "Rechazada" } }
+);;
+
+// Aviso y volver a la pantalla de pendientes
+Notify(
+    "Solicitud rechazada correctamente.";
+    NotificationType.Success
+);;
+Navigate(
+    PantallaSolicitudesPendientes;
+    ScreenTransition.UnCover
+)
