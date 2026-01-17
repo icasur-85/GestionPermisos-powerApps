@@ -1,0 +1,66 @@
+// =======================================================
+// Pantalla: PantallaEditarSolicitud
+// Descripción:
+// Pantalla destinada a la creación y edición de solicitudes.
+// El comportamiento del formulario y los mensajes mostrados
+// dependen del modo (nuevo registro o edición).
+// =======================================================
+
+
+// -------------------------------------------------------
+// PantallaEditarSolicitud - Propiedad: Title
+// Título dinámico en función del modo del formulario
+// -------------------------------------------------------
+If(
+    frmSolicitud.Mode = FormMode.New;
+    "Nueva solicitud";
+    "Detalle de solicitud"
+)
+
+
+// -------------------------------------------------------
+// frmSolicitud - Propiedad: Item
+// Registro de solicitud a editar o visualizar
+// -------------------------------------------------------
+varSolicitudSeleccionada
+
+
+// -------------------------------------------------------
+// frmSolicitud - Propiedad: DefaultMode
+// Modo inicial del formulario
+// -------------------------------------------------------
+FormMode.New
+
+
+// -------------------------------------------------------
+// frmSolicitud - Propiedad: OnFailure
+// Notificación de error en caso de fallo al guardar
+// -------------------------------------------------------
+Notify(
+    "No se ha podido guardar la solicitud.";
+    NotificationType.Error
+)
+
+
+// -------------------------------------------------------
+// frmSolicitud - Propiedad: OnSuccess
+// Notificación de éxito y navegación tras guardar
+// -------------------------------------------------------
+If(
+    frmSolicitud.Mode = FormMode.New;
+    Notify(
+        "Solicitud creada correctamente.";
+        NotificationType.Success
+    );
+    Notify(
+        "Solicitud actualizada correctamente.";
+        NotificationType.Success
+    )
+);;
+
+ResetForm(frmSolicitud);;
+
+Navigate(
+    PantallaMisSolicitudes;
+    ScreenTransition.UnCover
+)
