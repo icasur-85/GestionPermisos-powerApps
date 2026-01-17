@@ -1,0 +1,124 @@
+// =======================================================
+// Pantalla: PantallaRevocarConcesion
+// Descripción:
+// Pantalla destinada a la consulta de concesiones vigentes
+// y a su revocación. Incluye:
+// - Filtro por persona (combo)
+// - Búsqueda por texto (recurso/observaciones)
+// - Confirmación mediante popup antes de revocar
+// =======================================================
+
+
+// -------------------------------------------------------
+// cmbFiltroPersona - Propiedad: Items
+// Lista de personas con concesiones vigentes (valores únicos)
+// -------------------------------------------------------
+Distinct(
+    Filter(
+        Concesiones;
+        EstadoConcesion.Value = "Vigente"
+    );
+    'Persona:Nombre'.Value & " " & 'Persona:Apellidos'.Value
+)
+
+
+// -------------------------------------------------------
+// txtBuscarConcesion - Propiedad: OnChange
+// Limpia el estado de expansión/selección al modificar búsqueda
+// -------------------------------------------------------
+Set(
+    varPersonaExpandida;
+    Blank()
+)
+
+
+// -------------------------------------------------------
+// galConcesionesVigentes - Propiedad: Items
+// Filtra concesiones vigentes aplicando:
+// 1) Filtro por persona (combo)
+// 2) Filtro por texto (en descripción de recurso y observaciones)
+// -------------------------------------------------------
+Filter(
+    Concesiones;
+    EstadoConcesion.Value = "Vigente" &&
+
+    // Filtro por persona (combo)
+    (
+        IsBlank(cmbFiltroPersona.Selected.Value) ||
+        'Persona:Nombre'.Value & " " & 'Persona:Apellidos'.Value = cmbFiltroPersona.Selected.Value
+    ) &&
+
+    // Filtro por texto
+    (
+        IsBlank(Trim(txtBuscarConcesion.Text)) ||
+        !IsBlank(
+            Find(
+                Lower(Trim(txtBuscarConcesion.Text));
+                Lower('Recurso:Descripcion'.Value & " " & Observaciones & "")
+            )
+        )
+    )
+)
+
+
+// -------------------------------------------------------
+// icoPapelera - Propiedad: OnSelect
+// Selecciona la concesión y muestra el popup de confirmación
+// -------------------------------------------------------
+UpdateContext(
+    {
+        locConcesionSeleccionada: ThisItem;
+        locMostrarPopupRevocar: true
+    }
+)
+
+
+// -------------------------------------------------------
+// PopupRevocar - lblTextoPopup (propiedad Text)
+// Mensaje de confirmación contextual con datos de la concesión
+// -------------------------------------------------------
+"¿Seguro que quieres revocar la concesión del recurso " &
+locConcesionSeleccionada.'Recurso:Descripcion'.Value &
+" a " &
+locConcesionSeleccionada.'Persona:Nombre'.Value & " " &
+locConcesionSeleccionada.'Persona:Apellidos'.Value &
+"?"
+
+
+// -------------------------------------------------------
+// btnCancelarRevocar - Propiedad: OnSelect
+// Cierra el popup y limpia la selección
+// -------------------------------------------------------
+UpdateContext(
+    {
+        locMostrarPopupRevocar: false;
+        locConcesionSeleccionada: Blank()
+    }
+)
+
+
+// -------------------------------------------------------
+// btnConfirmarRevocar - Propiedad: OnSelect
+// Marca la concesión como revocada, establece fecha fin,
+// cierra el popup y notifica el resultado
+// -------------------------------------------------------
+Patch(
+    Concesiones;
+    locConcesionSeleccionada;
+    {
+        EstadoConcesion: { Value: "Revocada" };
+        FechaFin: Today()
+    }
+);;
+
+UpdateContext(
+    {
+        locMostrarPopupRevocar: false;
+        locConcesionSeleccionada: Blank()
+    }
+);;
+
+Notify(
+    "Concesión revocada correctamente.";
+    NotificationType.Success
+)
