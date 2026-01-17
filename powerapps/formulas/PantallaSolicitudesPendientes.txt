@@ -1,0 +1,44 @@
+// =======================================================
+// Pantalla: PantallaSolicitudesPendientes
+// Descripción:
+// Pantalla destinada a la consulta y tramitación de
+// solicitudes pendientes de resolución.
+// =======================================================
+
+
+// -------------------------------------------------------
+// galSolicitudesPendientes - Propiedad: Items
+// Muestra únicamente las solicitudes en estado "Pendiente"
+// -------------------------------------------------------
+Filter(
+    Solicitudes;
+    Estado.Value = "Pendiente"
+)
+
+
+// -------------------------------------------------------
+// NextArrow - Propiedad: OnSelect
+// Selecciona la solicitud, prepara el formulario en modo
+// edición y navega a la pantalla de tramitación
+// -------------------------------------------------------
+Set(
+    varSolicitudSeleccionada;
+    ThisItem
+);;
+
+EditForm(frmTramitarSolicitud);;
+
+Navigate(
+    PantallaTramitarSolicitud;
+    ScreenTransition.Cover
+)
+
+
+// -------------------------------------------------------
+// IconoVolver - Propiedad: OnSelect
+// Navegación de retorno a la pantalla de inicio
+// -------------------------------------------------------
+Navigate(
+    PantallaInicio;
+    ScreenTransition.UnCover
+)
