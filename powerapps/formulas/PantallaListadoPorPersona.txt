@@ -1,1 +1,53 @@
+// =======================================================
+// Pantalla: PantallaListadoPorPersona
+// Descripción:
+// Pantalla destinada a la consulta de concesiones/permisos
+// filtrados dinámicamente por persona.
+// =======================================================
 
+
+// -------------------------------------------------------
+// ComboPersonas - Propiedad: Items
+// Carga y ordena la lista de personas disponibles
+// -------------------------------------------------------
+Sort(
+    Concesiones,
+    'Persona:Nombre'.Value,
+    Ascending
+)
+
+
+// -------------------------------------------------------
+// GaleriaConcesiones - Propiedad: Items
+// Muestra únicamente las concesiones asociadas a la persona
+// seleccionada en el combo. Si no hay selección, la galería
+// permanece vacía.
+// -------------------------------------------------------
+If(
+    IsBlank(ComboPersonas.Selected),
+    Blank(),
+    Filter(
+        Concesiones,
+        'Persona:Nombre'.Value = ComboPersonas.Selected.'Persona:Nombre'.Value
+    )
+)
+
+
+// -------------------------------------------------------
+// BotónExportar - Propiedad: DisplayMode
+// -------------------------------------------------------
+If(
+    IsEmpty(GaleriaConcesiones.AllItems),
+    DisplayMode.Disabled,
+    DisplayMode.Edit
+)
+
+
+// -------------------------------------------------------
+// BotónExportar - Propiedad: OnSelect
+// Lanza el flujo de Power Automate para exportar los datos
+// mostrados en la galería a Excel Online
+// -------------------------------------------------------
+ExportarExcel.Run(
+    GaleriaConcesiones.AllItems
+)
