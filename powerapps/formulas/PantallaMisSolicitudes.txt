@@ -1,0 +1,22 @@
+// =======================================================
+// Pantalla: PantallaMisSolicitudes
+// Descripción:
+// Pantalla de consulta de solicitudes. Si el usuario tiene
+// rol TIC (varEsTIC = true) se muestran todas las solicitudes.
+// En caso contrario, solo se muestran las solicitudes creadas
+// por el usuario actual.
+// =======================================================
+
+
+// -------------------------------------------------------
+// galSolicitudes - Propiedad: Items
+// Filtrado por rol del usuario
+// -------------------------------------------------------
+If(
+    varEsTIC;
+    Solicitudes;
+    Filter(
+        Solicitudes;
+        Author.Email = User().Email
+    )
+)
