@@ -99,3 +99,52 @@ La exportación se realiza desde Power Apps:
 Los detalles de expresiones y pasos se documentan en:
 - `Powerautomate/FlujoExportacion.md`
 - `Powerautomate/Expresiones.txt`
+
+## 7. Arquitectura de automatización (Power Automate)
+
+La solución implementa parte de su lógica de negocio mediante flujos de Power Automate,
+utilizando distintos tipos de flujos en función del evento que los desencadena. Esta
+arquitectura permite desacoplar la automatización de procesos de la interfaz de usuario
+y centralizar tareas repetitivas o programadas.
+
+### 7.1 Tipos de flujos utilizados
+
+- **Flujos instantáneos**  
+  Ejecutados bajo demanda desde Power Apps. Se utilizan para operaciones que requieren
+  interacción directa del usuario, como la exportación de datos a Excel.
+
+- **Flujos automatizados**  
+  Se activan automáticamente ante determinados eventos del sistema, como la creación
+  o actualización de solicitudes. Se emplean para el envío de notificaciones y la
+  comunicación de cambios de estado a los usuarios.
+
+- **Flujos programados**  
+  Se ejecutan de forma periódica sin intervención del usuario. Permiten realizar
+  comprobaciones de estado y tareas de mantenimiento, como la detección de concesiones
+  caducadas.
+
+### 7.2 Flujos implementados
+
+- **ExportarPermisosExcel**  
+  Flujo instantáneo invocado desde Power Apps para generar un fichero Excel Online a
+  partir de los datos proporcionados por la aplicación y devolver su URL para su apertura.
+
+- **Comprobar concesiones caducadas**  
+  Flujo programado encargado de revisar periódicamente las concesiones y actualizar su
+  estado cuando se alcanza la fecha de finalización.
+
+- **Notificación nueva solicitud de permiso**  
+  Flujo automatizado que envía notificaciones cuando se registra una nueva solicitud
+  en el sistema.
+
+- **Notificación resultado solicitud permiso**  
+  Flujo automatizado que informa al usuario del resultado de la tramitación de su
+  solicitud (aceptada o rechazada).
+
+### 7.3 Integración con la aplicación
+
+Los flujos de Power Automate se integran con Power Apps y SharePoint Online mediante
+conectores estándar de Microsoft 365. Esta integración permite implementar una
+arquitectura distribuida, en la que la lógica de presentación reside en Power Apps y
+la automatización de procesos se gestiona de forma centralizada en Power Automate.
+
