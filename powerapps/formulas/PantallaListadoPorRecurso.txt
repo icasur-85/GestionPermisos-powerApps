@@ -1,0 +1,34 @@
+// =======================================================
+// Pantalla: PantallaListadoPorRecurso
+// Descripción:
+// Pantalla de consulta de concesiones/permisos vigentes
+// filtrados por recurso. Incluye un combo con los recursos
+// disponibles y una galería con el listado filtrado.
+// =======================================================
+
+
+// -------------------------------------------------------
+// cmbRecurso - Propiedad: Items
+// Obtiene los recursos distintos presentes en Concesiones
+// y los ordena ascendentemente para su selección
+// -------------------------------------------------------
+Sort(
+    Distinct(Concesiones; Recurso.Value);
+    Value;
+    SortOrder.Ascending
+)
+
+
+// -------------------------------------------------------
+// galListadoRecurso - Propiedad: Items
+// Muestra concesiones vigentes y aplica filtro por recurso
+// si existe selección en el combo
+// -------------------------------------------------------
+Filter(
+    Concesiones;
+    EstadoConcesion.Value = "Vigente" &&
+    (
+        IsBlank(cmbRecurso.Selected.Value) ||
+        Recurso.Value = cmbRecurso.Selected.Value
+    )
+)
