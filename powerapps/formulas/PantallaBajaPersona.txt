@@ -1,0 +1,141 @@
+// =======================================================
+// Pantalla: PantallaBajaPersona
+// Descripción:
+// Pantalla destinada a dar de baja (marcar como inactiva) a
+// una persona y revocar automáticamente todas sus concesiones
+// vigentes. Incluye búsqueda, expansión para ver concesiones
+// y confirmación mediante popup.
+// =======================================================
+
+
+// -------------------------------------------------------
+// PopupBaja - lblTextoPopupBaja (propiedad Text)
+// Mensaje de confirmación previo a la baja
+// -------------------------------------------------------
+"Vas a dar de baja a la persona seleccionada." & Char(10) & Char(10) &
+"Esta acción la marcará como inactiva en el sistema y revocará automáticamente todas sus concesiones vigentes." & Char(10) & Char(10) &
+"¿Deseas continuar?"
+
+
+// -------------------------------------------------------
+// btnCancelarBaja - Propiedad: OnSelect
+// Cierra el popup y limpia la selección pendiente
+// -------------------------------------------------------
+Set(varPopupBajaPersona; false);;
+Set(varPersonaBajaPendiente; Defaults(Personas))
+
+
+// -------------------------------------------------------
+// btnConfirmarBaja - Propiedad: OnSelect
+// 1) Marca la persona como inactiva
+// 2) Revoca todas las concesiones vigentes asociadas
+// 3) Limpia estado, refresca datos y notifica el resultado
+// -------------------------------------------------------
+With(
+    { _persona: varPersonaBajaPendiente };
+
+    Patch(
+        Personas;
+        _persona;
+        { Activa: false }
+    );;
+
+    ForAll(
+        Filter(
+            Concesiones;
+            Persona.Id = _persona.ID &&
+            EstadoConcesion.Value = "Vigente"
+        );
+        Patch(
+            Concesiones;
+            { ID: ThisRecord.ID };
+            {
+                EstadoConcesion: { Value: "Revocada" };
+                FechaFin: Today()
+            }
+        )
+    );;
+
+    Set(varPersonaExpandida; Blank());;
+
+    Set(varPopupBajaPersona; false);;
+    Set(varPersonaBajaPendiente; Defaults(Personas));;
+
+    Refresh(Personas);;
+    Refresh(Concesiones);;
+
+    Notify(
+        "Persona dada de baja y concesiones revocadas";
+        NotificationType.Success
+    )
+)
+
+
+// -------------------------------------------------------
+// galPersonasBaja - Propiedad: Items
+// Listado de personas activas con filtro de búsqueda
+// -------------------------------------------------------
+Filter(
+    Personas;
+    Activa = true &&
+    (
+        IsBlank(txtBuscarPersonaBaja.Text) ||
+        StartsWith(DNI; txtBuscarPersonaBaja.Text) ||
+        StartsWith('Nombre (Title)'; txtBuscarPersonaBaja.Text) ||
+        StartsWith(Apellidos; txtBuscarPersonaBaja.Text)
+    )
+)
+
+
+// -------------------------------------------------------
+// icoExpandir - Propiedad: OnSelect
+// Controla la expansión/colapso del detalle de una persona
+// -------------------------------------------------------
+Set(
+    varPersonaExpandida;
+    If(
+        varPersonaExpandida = ThisItem.ID;
+        Blank();
+        ThisItem.ID
+    )
+)
+
+
+// -------------------------------------------------------
+// lblConcesiones - Propiedad: Text
+// Muestra las concesiones vigentes de la persona expandida
+// -------------------------------------------------------
+With(
+    {
+        _concesiones: Filter(
+            Concesiones;
+            Persona.Id = ThisItem.ID &&
+            EstadoConcesion.Value = "Vigente"
+        )
+    };
+    If(
+        CountRows(_concesiones) = 0;
+        "No tiene concesiones vigentes";
+        Concat(
+            _concesiones;
+
+            "📁 " & Recurso.Value & " - " & 'Recurso:Descripcion'.Value & Char(10) &
+            "   Tipo de permiso: " & TipoPermiso.Value & Char(10) &
+            "   Observaciones: " &
+                If(
+                    IsBlank(Observaciones);
+                    "Ninguna";
+                    PlainText(Observaciones)
+                ) &
+            Char(10) & Char(10)
+        )
+    )
+)
+
+
+// -------------------------------------------------------
+// btnDarBajaPersona - Propiedad: OnSelect
+// Selecciona la persona y muestra el popup de confirmación
+// -------------------------------------------------------
+Set(varPersonaBajaPendiente; ThisItem);;
+Set(varPopupBajaPersona; true)
