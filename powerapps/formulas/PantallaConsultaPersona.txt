@@ -1,0 +1,44 @@
+// =======================================================
+// Pantalla: PantallaConsultaPersona
+// Descripción:
+// Pantalla destinada a la consulta de personas y sus
+// concesiones asociadas. Permite filtrar por estado (activa)
+// y realizar búsquedas por distintos campos.
+// =======================================================
+
+
+// -------------------------------------------------------
+// galConcesionesPersona - Propiedad: Items
+// Filtrado dinámico de personas en función de:
+// - Estado (activas / todas)
+// - Texto de búsqueda (nombre, apellidos o DNI)
+// -------------------------------------------------------
+If(
+    chkActivas.Checked;
+    // Solo personas activas
+    If(
+        IsBlank(Trim(txtBuscarPersona.Text));
+        Filter(
+            Personas;
+            Activa
+        );
+        Filter(
+            Personas;
+            Activa;
+            StartsWith('Nombre (Title)'; txtBuscarPersona.Text)
+                || StartsWith(Apellidos; txtBuscarPersona.Text)
+                || StartsWith(DNI; txtBuscarPersona.Text)
+        )
+    );
+    // Todas las personas (activas e inactivas)
+    If(
+        IsBlank(Trim(txtBuscarPersona.Text));
+        Personas;
+        Filter(
+            Personas;
+            StartsWith('Nombre (Title)'; txtBuscarPersona.Text)
+                || StartsWith(Apellidos; txtBuscarPersona.Text)
+                || StartsWith(DNI; txtBuscarPersona.Text)
+        )
+    )
+)
