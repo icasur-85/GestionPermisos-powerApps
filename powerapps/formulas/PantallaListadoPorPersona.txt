@@ -11,9 +11,12 @@
 // Carga y ordena la lista de personas disponibles
 // -------------------------------------------------------
 Sort(
-    Concesiones,
-    'Persona:Nombre'.Value,
-    Ascending
+    Distinct(
+        Concesiones;
+        'Persona:Apellidos'.Value & ", " & 'Persona:Nombre'.Value
+    );
+    Value;
+    SortOrder.Ascending
 )
 
 
@@ -24,30 +27,10 @@ Sort(
 // permanece vacía.
 // -------------------------------------------------------
 If(
-    IsBlank(ComboPersonas.Selected),
-    Blank(),
+    IsBlank(cmbPersona.Selected.Value);
+    Filter(Concesiones; false);
     Filter(
-        Concesiones,
-        'Persona:Nombre'.Value = ComboPersonas.Selected.'Persona:Nombre'.Value
+        Concesiones;
+        'Persona:Apellidos'.Value & ", " & 'Persona:Nombre'.Value = cmbPersona.Selected.Value
     )
-)
-
-
-// -------------------------------------------------------
-// BotónExportar - Propiedad: DisplayMode
-// -------------------------------------------------------
-If(
-    IsEmpty(GaleriaConcesiones.AllItems),
-    DisplayMode.Disabled,
-    DisplayMode.Edit
-)
-
-
-// -------------------------------------------------------
-// BotónExportar - Propiedad: OnSelect
-// Lanza el flujo de Power Automate para exportar los datos
-// mostrados en la galería a Excel Online
-// -------------------------------------------------------
-ExportarExcel.Run(
-    GaleriaConcesiones.AllItems
 )
